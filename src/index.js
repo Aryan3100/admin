@@ -6,6 +6,8 @@
  require('dotenv').config();
  const cors = require('cors')
 
+
+ const app = express();
  app.use(cors());
 
  const port = process.env.PORT || 4000;
@@ -21,7 +23,7 @@
 
  const upload = multer({storage}).array('image', 5)
 
- const app = express();
+
 
  app.use(express.json());
  app.use(express.urlencoded({extended: false}))
