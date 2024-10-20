@@ -4,7 +4,10 @@
  const multer = require('multer')
  const Product = require('./models/product.schema.js')
  require('dotenv').config();
+ const cloudinary = require('../helpers/cloudinary.js')
  const cors = require('cors')
+ const fs = require('fs')
+const { url } = require('inspector')
 
 
  const app = express();
@@ -13,6 +16,7 @@
  const port = process.env.PORT || 4000;
  
  const storage = multer.diskStorage({
+    
     destination: function(req , file ,cb){
         return cb(null, './uploads');
     },
@@ -21,7 +25,7 @@
     }
  })
 
- const upload = multer({storage}).array('image', 5)
+ const uploades = multer({storage}).array('image', 5)
 
 
 
@@ -77,11 +81,21 @@
 
 
 
-  app.post('/addProduct', upload , async(req , res)=>{
-       try{
+  app.post('/addProduct', uploades , async(req , res)=>{
 
-        const path = req.files.map(arr => arr.path )
-        
+    const uploader = async(path) => cloudinary.uploads(path)
+    const urls = []
+    const files = req.files
+    for(const file of files){
+      const {path} = file
+      const newPath = await uploader(path)
+      urls.push(newPath)
+      fs.unlinkSync(path)
+    }
+    
+    const path =  urls.map(arr => arr.secure_url)
+
+       try{
           const data = {
             title:req.body.title,
             price:req.body.price,
@@ -89,10 +103,10 @@
             discription:req.body.discription,
             image:path
           }
-       
+
         await Product.create(data)
         res.render('home')
-    //    return res.redirect('home')
+       console.log(data)
 
        }catch{
          res.send('somthing went wrong')
