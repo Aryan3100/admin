@@ -4,6 +4,10 @@
  const multer = require('multer')
  const Product = require('./models/product.schema.js')
  require('dotenv').config();
+ const cors = require('cors')
+
+ app.use(cors());
+
  const port = process.env.PORT || 4000;
  
  const storage = multer.diskStorage({
