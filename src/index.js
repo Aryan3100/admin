@@ -4,6 +4,7 @@
  const multer = require('multer')
  const Product = require('./models/product.schema.js')
  require('dotenv').config();
+ const port = process.env.PORT || 4000;
  
  const storage = multer.diskStorage({
     destination: function(req , file ,cb){
@@ -95,7 +96,7 @@
   
 
  
- app.listen( process.env.PORT ,()=>{
+ app.listen( port ,()=>{
     console.log('sytem is runings',)
     
 })
